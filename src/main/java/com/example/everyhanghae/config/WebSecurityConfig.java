@@ -48,8 +48,8 @@ public class WebSecurityConfig {
         // 기본 설정인 Session 방식은 사용하지 않고 JWT 방식을 사용하기 위한 설정
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
-        http.authorizeRequests().antMatchers(HttpMethod.POST, "/api/auth/signup").permitAll()   // 회원가입
-                .antMatchers(HttpMethod.POST, "/api/auth/login").permitAll()                    // 로그인
+        http.authorizeRequests().antMatchers(HttpMethod.POST, "/api/users/signup").permitAll()   // 회원가입
+                .antMatchers(HttpMethod.POST, "/api/users/login").permitAll()                    // 로그인
                 .antMatchers(HttpMethod.GET, "/api/post", "/api/post/{postId}").permitAll()     // 게시글 조회(전체, 상세)
                 .antMatchers(HttpMethod.POST, "/api/post/{postId}").permitAll()                 // 좋아요 -> 로그인 하지 않으면 오류 메세지 보내기 위해
                 .anyRequest().authenticated()
