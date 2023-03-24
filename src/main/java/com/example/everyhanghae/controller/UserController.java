@@ -41,6 +41,4 @@ public class UserController {
         return ResponseMessage.SuccessResponse("로그인 성공!", "");
     }
 
-
-
 }
