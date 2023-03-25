@@ -15,16 +15,10 @@ public class BoardController {
 
     private final BoardService boardService;
 
-    // 전체 게시글 조회
+    // 게시글 전체, 유형별 조회
     @GetMapping("/boards")
-    public ResponseEntity getAllBoards(@AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return ResponseMessage.SuccessResponse("조회 완료" , boardService.getAllBoards(userDetails.getUser()));
-    }
-
-    // 게시글 유형별 조회
-    @GetMapping("/boards?board-type={boardType}")
-    public void getTypeBoards(@RequestParam(value = "boardType", required = false, defaultValue = "1") int boardType, @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        boardService.getTypeBoards(boardType, userDetails.getUser());
+    public ResponseEntity getTypeBoards(@RequestParam(value = "board-type", required = false, defaultValue = "0") int boardType, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return ResponseMessage.SuccessResponse("게시글 조회 완료" , boardService.getTypeBoards(boardType, userDetails.getUser()));
     }
 
     // 게시글 상세 조회
@@ -34,8 +28,8 @@ public class BoardController {
     }
 
     // 게시글 등록
-    @PostMapping("board/{boardId}")
-    public ResponseEntity createBoard(@PathVariable Long boardId, @RequestBody BoardRequestDto postRequestDto, @AuthenticationPrincipal UserDetailsImpl userDetails){
+    @PostMapping("board")
+    public ResponseEntity createBoard(@RequestBody BoardRequestDto postRequestDto, @AuthenticationPrincipal UserDetailsImpl userDetails){
         boardService.createPost(postRequestDto, userDetails.getUser());
         return ResponseMessage.SuccessResponse("작성 완료", "");
     }
