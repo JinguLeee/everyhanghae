@@ -15,7 +15,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -121,7 +120,7 @@ public class BoardService {
     //게시글 존재 하는지 확인 하는 공통 메서드
     public Board isExistBoard(Long id){
         return boardRepository.findById(id).orElseThrow(
-                () -> new CustomException(CustomErrorCode.POST_NOT_FOUND)
+                () -> new CustomException(CustomErrorCode.BOARD_NOT_FOUND)
         );
     }
 
