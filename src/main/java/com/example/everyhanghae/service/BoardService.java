@@ -8,7 +8,6 @@ import com.example.everyhanghae.entity.BoardType;
 import com.example.everyhanghae.entity.User;
 import com.example.everyhanghae.exception.CustomErrorCode;
 import com.example.everyhanghae.exception.CustomException;
-import com.example.everyhanghae.exception.CustomException;
 import com.example.everyhanghae.repository.BoardRepository;
 import com.example.everyhanghae.repository.BoardTypeRepository;
 import com.example.everyhanghae.security.UserDetailsImpl;
@@ -19,9 +18,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
-import static com.example.everyhanghae.exception.CustomErrorCode.NOT_AUTHOR;
-import static com.example.everyhanghae.exception.CustomErrorCode.POST_NOT_FOUND;
 
 @Service
 @RequiredArgsConstructor
@@ -87,7 +83,8 @@ public class BoardService {
         }
         boardRepository.saveAndFlush(new Board(postRequestDto, optionalBoardType.get(), user));
     }
-    @javax.transaction.Transactional
+
+    @Transactional
     public void updatePost(Long boardId, BoardRequestDto boardRequestDto, User user) {
         Board board = isExistBoard(boardId);
         isAuthor(board,user);
@@ -115,14 +112,14 @@ public class BoardService {
     //게시글 존재 하는지 확인 하는 공통 메서드
     public Board isExistBoard(Long id){
         return boardRepository.findById(id).orElseThrow(
-                () -> new CustomException(POST_NOT_FOUND)
+                () -> new CustomException(CustomErrorCode.POST_NOT_FOUND)
         );
     }
 
     //작성자가 일치 하는지 확인 하는 공통 메서드
     public void isAuthor(Board board, User user) {
         if (!board.getUser().getId().equals(user.getId())) {
-            throw new CustomException(NOT_AUTHOR);
+            throw new CustomException(CustomErrorCode.NOT_AUTHOR);
         }
     }
 }
