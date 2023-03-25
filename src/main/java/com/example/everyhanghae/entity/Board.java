@@ -1,4 +1,5 @@
 package com.example.everyhanghae.entity;
+import com.example.everyhanghae.dto.request.BoardRequestDto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import javax.persistence.*;
@@ -13,10 +14,10 @@ public class Board extends Timestamped {
     private Long id;
 
     @Column(nullable = false)
-    private ClassEnum classId;
+    private int classId;
 
     @Column(nullable = false)
-    private BoardEnum boardType;
+    private int boardType;
 
     @Column(nullable = false)
     private String title;
@@ -27,5 +28,13 @@ public class Board extends Timestamped {
     @ManyToOne
     @JoinColumn(name = "userId", nullable = false)
     private User user;
+
+    public Board(BoardRequestDto postRequestDto, User user) {
+        this.classId = user.getClassId();
+        this.boardType = postRequestDto.getBoardType();
+        this.title = postRequestDto.getTitle();
+        this.content = postRequestDto.getContent();
+        this.user = user;
+    }
 
 }
