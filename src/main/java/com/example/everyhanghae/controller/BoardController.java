@@ -24,8 +24,8 @@ public class BoardController {
 
     // 게시글 상세 조회
     @GetMapping("/board/{boardId}")
-    public void getDetailBoards(@PathVariable Long boardId, @AuthenticationPrincipal UserDetailsImpl userDetails){
-        boardService.getDetailBoards(boardId, userDetails);
+    public ResponseEntity getDetailBoard(@PathVariable Long boardId, @AuthenticationPrincipal UserDetailsImpl userDetails){
+        return ResponseMessage.SuccessResponse("게시글 상세 조회 완료" , boardService.getDetailBoard(boardId, userDetails.getUser()));
     }
 
     // 게시글 등록
