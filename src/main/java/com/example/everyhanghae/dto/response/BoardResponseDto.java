@@ -5,12 +5,14 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
-public class BoardResposeDto {
-    private String title;
-    private String content;
+public class BoardResponseDto {
 
-    public BoardResposeDto(Board board) {
+    private Long id;
+    private String title;
+
+    public BoardResponseDto(Board board) {
+        this.id = board.getId();
         this.title = board.getTitle();
-        this.content = board.getContent();
     }
+
 }

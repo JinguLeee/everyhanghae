@@ -16,8 +16,9 @@ public class Board extends Timestamped {
     @Column(nullable = false)
     private int classId;
 
-    @Column(nullable = false)
-    private int boardType;
+    @OneToOne
+    @JoinColumn(name = "boardType")
+    private BoardType boardType;
 
     @Column(nullable = false)
     private String title;
@@ -29,11 +30,11 @@ public class Board extends Timestamped {
     @JoinColumn(name = "userId", nullable = false)
     private User user;
 
-    public Board(BoardRequestDto postRequestDto, User user) {
+    public Board(BoardRequestDto boardRequestDto, BoardType boardType, User user) {
         this.classId = user.getClassId();
-        this.boardType = postRequestDto.getBoardType();
-        this.title = postRequestDto.getTitle();
-        this.content = postRequestDto.getContent();
+        this.boardType = boardType;
+        this.title = boardRequestDto.getTitle();
+        this.content = boardRequestDto.getContent();
         this.user = user;
     }
 

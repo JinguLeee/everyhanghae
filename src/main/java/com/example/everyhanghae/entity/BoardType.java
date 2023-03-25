@@ -10,9 +10,9 @@ import javax.persistence.*;
 public class BoardType {
 
     @Id
-    private int type;
+    private int boardType;
 
     @Column
-    private String boardName;
+    private String typeName;
 
 }
