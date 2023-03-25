@@ -22,10 +22,13 @@ public enum CustomErrorCode {
     /* 404 NOT_FOUND : Resource 를 찾을 수 없음 */
     USER_NOT_FOUND(NOT_FOUND, "등록된 사용자가 없습니다"),
     POST_NOT_FOUND(NOT_FOUND, "선택한 게시물을 찾을 수 없습니다."),
-    COMMENT_NOT_FOUND(NOT_FOUND, "선택한 댓글을 찾을 수 없습니다.")
+    COMMENT_NOT_FOUND(NOT_FOUND, "선택한 댓글을 찾을 수 없습니다."),
+    SECRET_KEY_NOT_FOUND(NOT_FOUND, "해당 시크릿 키는 존재하지 않습니다.")
 
     ;
+
     private final HttpStatus httpStatus;
     private final String message;
+    
 }
 
