@@ -27,6 +27,18 @@ public class ResponseMessage {
                 );
     }
 
+    // 정규식 globalException을 위해 추가
+    public static ResponseEntity ErrorResponse(String message) {
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(ResponseMessage.builder()
+                        .message(message)
+                        .statusCode(HttpStatus.BAD_REQUEST.value())
+                        .data("")
+                        .build()
+                );
+    }
+
     public static ResponseEntity SuccessResponse(String message, Object data) {
         return ResponseEntity
                 .status(HttpStatus.OK)
@@ -37,6 +49,7 @@ public class ResponseMessage {
                         .build()
                 );
     }
+
 }
 
 

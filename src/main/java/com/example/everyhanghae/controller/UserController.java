@@ -2,14 +2,11 @@ package com.example.everyhanghae.controller;
 
 import com.example.everyhanghae.dto.request.LoginRequestDto;
 import com.example.everyhanghae.dto.request.SignupRequestDto;
-import com.example.everyhanghae.exception.CustomErrorCode;
-import com.example.everyhanghae.exception.CustomException;
 import com.example.everyhanghae.exception.ResponseMessage;
 import com.example.everyhanghae.jwt.JwtUtil;
 import com.example.everyhanghae.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
@@ -25,14 +22,15 @@ public class UserController {
     //@Valid - 객체 검증을 수행할 때 해당 객체가 어떤 제약 조건을 만족하는지 검증한다.
     //해당 객체가 유효하지 않으면 BindingResult 객체에 에러 정보를 담는다.
     @PostMapping("/signup")
-    public ResponseEntity signup(@Valid @RequestBody SignupRequestDto signupRequestDto, BindingResult bindingResult) {
+    public ResponseEntity signup(@Valid @RequestBody SignupRequestDto signupRequestDto) {
         //@Valid - 해당 파라미터가 유효성 검사를 통과해야만 메소드가 실행될 수 있도록 하는 기능
         //@RequestBody - HTTP 요청의 본문에 있는 데이터를 SignupRequestDto 객체로 매핑
         //bindingResult - 유효성 검사 결과를 저장하는 객체
-        if (bindingResult.hasErrors()) {
-            throw new CustomException(CustomErrorCode.NOT_PROPER_INPUTFORM);
-            //bindingResult 객체에 에러 정보가 저장되어 있다면, CustomException을 발생시키는 예외 처리를 수행
-        }
+
+//        if (bindingResult.hasErrors()) {
+//            throw new CustomException(CustomErrorCode.NOT_PROPER_INPUTFORM);
+//            //bindingResult 객체에 에러 정보가 저장되어 있다면, CustomException을 발생시키는 예외 처리를 수행
+//        }
         return ResponseMessage.SuccessResponse(userService.signup(signupRequestDto) , "");
         //회원가입 성공 결과를 ResponseMessage 객체에 담아 반환
     }
