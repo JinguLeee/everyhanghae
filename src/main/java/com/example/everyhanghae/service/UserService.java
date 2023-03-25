@@ -2,6 +2,7 @@ package com.example.everyhanghae.service;
 
 import com.example.everyhanghae.dto.request.LoginRequestDto;
 import com.example.everyhanghae.dto.request.SignupRequestDto;
+import com.example.everyhanghae.entity.ClassCode;
 import com.example.everyhanghae.entity.User;
 import com.example.everyhanghae.exception.CustomErrorCode;
 import com.example.everyhanghae.exception.CustomException;
@@ -10,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -22,19 +24,24 @@ public class UserService {
 
     @Transactional
     public String signup(SignupRequestDto signupRequestDto){
-        //회원아이디 중복 확인
+        // 회원아이디 중복 확인
         boolean found = userRepository.findByLoginId(signupRequestDto.getLoginId()).isPresent();
         if (found) {
             throw new CustomException(CustomErrorCode.DUPLICATE_USER);
         }
 
-        //닉네임 중복 확인
+        // 닉네임 중복 확인
         found = userRepository.findByUsername(signupRequestDto.getUserName()).isPresent();
         if (found) {
             throw new CustomException(CustomErrorCode.DUPLICATE_NICKNAME);
         }
 
-        User user = new User(signupRequestDto, passwordEncoder.encode(signupRequestDto.getPassword()));
+        // 시크릿코드 찾기
+        Optional<ClassCode> classCode = userRepository.queryFindBySecret(signupRequestDto.getSecretKey());
+        if (classCode.isEmpty()){
+            throw new CustomException(CustomErrorCode.SECRET_KEY_NOT_FOUND);
+        }
+        User user = new User(signupRequestDto, passwordEncoder.encode(signupRequestDto.getPassword()), classCode.get().getClassId());
         userRepository.save(user);
 
         return "회원가입 성공";

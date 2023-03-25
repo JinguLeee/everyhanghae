@@ -37,7 +37,7 @@ public class WebSecurityConfig {
     public WebSecurityCustomizer webSecurityCustomizer() {
         // h2-console 사용 및 resources 접근 허용 설정
         return (web) -> web.ignoring()
-                .requestMatchers(PathRequest.toH2Console())
+//                .requestMatchers(PathRequest.toH2Console())
                 .requestMatchers(PathRequest.toStaticResources().atCommonLocations());
     }
 
@@ -50,8 +50,8 @@ public class WebSecurityConfig {
 
         http.authorizeRequests().antMatchers(HttpMethod.POST, "/api/users/signup").permitAll()   // 회원가입
                 .antMatchers(HttpMethod.POST, "/api/users/login").permitAll()                    // 로그인
-                .antMatchers(HttpMethod.GET, "/api/post", "/api/post/{postId}").permitAll()     // 게시글 조회(전체, 상세)
-                .antMatchers(HttpMethod.POST, "/api/post/{postId}").permitAll()                 // 좋아요 -> 로그인 하지 않으면 오류 메세지 보내기 위해
+                .antMatchers(HttpMethod.GET, "/api/post", "/api/post/{postId}").permitAll()      // 게시글 조회(전체, 상세)
+                .antMatchers(HttpMethod.POST, "/api/post/{postId}").permitAll()                  // 좋아요 -> 로그인 하지 않으면 오류 메세지 보내기 위해
                 .anyRequest().authenticated()
                 // JWT 인증/인가를 사용하기 위한 설정
                 .and().addFilterBefore(new JwtAuthFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class);

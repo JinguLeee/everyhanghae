@@ -1,9 +1,7 @@
 package com.example.everyhanghae.entity;
-
 import com.example.everyhanghae.dto.request.SignupRequestDto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
 import javax.persistence.*;
 
 @Getter
@@ -25,12 +23,13 @@ public class User {
     private String password;
 
     @Column(nullable = false)
-    private long class_id;
+    private int classId;
 
 
-    public User(SignupRequestDto signupRequestDto, String password) {
+    public User(SignupRequestDto signupRequestDto, String password, int classId) {
         this.loginId = signupRequestDto.getLoginId();
         this.username = signupRequestDto.getUserName();
         this.password = password;
+        this.classId = classId;
     }
 }
