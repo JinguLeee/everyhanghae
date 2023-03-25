@@ -15,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -29,11 +30,12 @@ public class BoardService {
     // 게시글 전체, 유형별 조회
     @Transactional
     public List<BoardResponseAllDto> getTypeBoards(int boardType, User user) {
-        System.out.println("boardType = " + boardType);
+        // 전체 검색일 때 (default = 0)
+
+        // 반환할 리스트 선언, 게시글 타입별 리스트를 add 하여 보냄
         List<BoardResponseAllDto> boardResponseAllDtoList = new ArrayList<>();
-        Optional<BoardType> optionalBoardType = boardTypeRepository.queryFindByType(boardType);
+
         if (boardType == 0){
-            // 반환할 리스트 선언, 게시글 타입별 리스트를 add 하여 보냄
 
             // 현재 게시판 타입을 모두 조회
             List<BoardType> boardTypeList = boardTypeRepository.queryFindAll();
@@ -42,11 +44,12 @@ public class BoardService {
             for (BoardType boardTypeEntity : boardTypeList) {
                 // 기수, 게시판 타입으로 조회
                 List<Board> boardList = boardRepository.findAllByClassIdAndBoardTypeOrderByCreatedAtDesc(user.getClassId(), boardTypeEntity);
+//                List<Board> boardList = boardRepository.findAllByClassIdAndBoardTypeOrderByCreatedAtDesc(user.getClassId(), boardTypeEntity.getBoardType());
 
                 // 조회된 내역을 BoardResposeDto로 변환
                 List<BoardResponseDto> boardResponseDtoList = new ArrayList<>();
 
-                // 조회된 내역 중 5개까지만 보내기
+                // 조회된 내역 중  최대 5개까지만 보내기
                 for (int i = 0; i < (boardList.size() > 5 ? 5 : boardList.size()); i++){
                     boardResponseDtoList.add(new BoardResponseDto(boardList.get(i)));
                 }
@@ -57,8 +60,14 @@ public class BoardService {
             return boardResponseAllDtoList;
         }
 
+        // 전체 타입별 검색일 때 (boardType = 1, 2, 3)
+
+        // 게시판 타입 종류 검색
+        Optional<BoardType> optionalBoardType = boardTypeRepository.queryFindByType(boardType);
+
         // 기수, 게시판 타입으로 조회
         List<Board> boardList = boardRepository.findAllByClassIdAndBoardTypeOrderByCreatedAtDesc(user.getClassId(), optionalBoardType.get());
+//        List<Board> boardList = boardRepository.findAllByClassIdAndBoardTypeOrderByCreatedAtDesc(user.getClassId(), optionalBoardType.get().getBoardType());
 
         // BoardTypeResponseDto 리스트로 변환
         List<BoardTypeResponseDto> boardResponseDtoList = new ArrayList<>();
