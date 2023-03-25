@@ -44,9 +44,7 @@ public class BoardController {
     @DeleteMapping("board/{boardId}")
     public ResponseEntity<String> deletePost(@PathVariable Long boardId, @AuthenticationPrincipal UserDetailsImpl userDetails){
         boardService.deletePost(boardId, userDetails.getUser());
-//        return ResponseMessage.SuccessResponse("삭제 완료", "");
         return ResponseEntity.status(HttpStatus.OK).body("게시글 삭제 성공");
-        //TODO : ResponseMessage 사용하신 이유 묻고 모두 적용하기, data에는 어떤 자료가 들어가나요? (순수한 질문!!/제로 공격성)
     }
 
 }
