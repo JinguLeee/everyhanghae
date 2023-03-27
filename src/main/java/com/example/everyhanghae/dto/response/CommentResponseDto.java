@@ -9,15 +9,16 @@ import java.time.format.DateTimeFormatter;
 @Getter
 public class CommentResponseDto {
     private Long id;
+    private String userName;
     private String comment;
-    private LocalDateTime createdAt;
-    private LocalDateTime modifiedAt;
+    private String createdAt;
 
     public CommentResponseDto(Comment comment){
         this.id = comment.getId();
         this.comment = comment.getComment();
-        this.createdAt = comment.getCreatedAt();
-        this.modifiedAt = comment.getModifiedAt();
+        this.userName = comment.getUser().getUsername();
+        this.createdAt = comment.getCreatedAt().format(DateTimeFormatter.ofPattern("MM/dd HH:mm"));
+
     }
 
 }
