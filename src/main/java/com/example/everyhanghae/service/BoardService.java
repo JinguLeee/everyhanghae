@@ -11,6 +11,7 @@ import com.example.everyhanghae.exception.CustomErrorCode;
 import com.example.everyhanghae.exception.CustomException;
 import com.example.everyhanghae.repository.BoardRepository;
 import com.example.everyhanghae.repository.BoardTypeRepository;
+import com.example.everyhanghae.repository.CommentRepository;
 import com.example.everyhanghae.repository.LikesRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -27,6 +28,8 @@ public class BoardService {
     private final BoardRepository boardRepository;
     private final BoardTypeRepository boardTypeRepository;
     private final LikesRepository likesRepository;
+
+    private final CommentRepository commentRepository;
 
     // 게시글 전체, 유형별 조회
     @Transactional
@@ -96,19 +99,20 @@ public class BoardService {
         boolean onLike = false;
         boolean onMine = board.getUser().getId() == user.getId();
         Long totalLike = 0L;
-        List<CommentResponseDto> commentResponseList = getCommentResponseList(board, user);
+        Long totalComment = 0L;
+        List<CommentResponseDto> commentResponseList = getCommentResponseList(boardId);
         return new BoardDetailResponseDto(board, onLike, totalLike, commentResponseList.size(), onMine, commentResponseList);
     }
 
-    //댓글 작업
-    public List<CommentResponseDto> getCommentResponseList(Board board, User user){
+    //댓글 작업 >> 양방향에서 단방향으로 수정 commentrepository에서 직접 불러오기
+    public List<CommentResponseDto> getCommentResponseList(Long boardId){
         List<CommentResponseDto> commentResponseList = new ArrayList<>();
-        for(Comment comment : board.getCommentList()){
-            boolean onMine = comment.getUser().getId() == user.getId();
-            commentResponseList.add(new CommentResponseDto(comment, onMine));
+        for(Comment comment : commentRepository.findByBoardId(boardId)){
+            commentResponseList.add(new CommentResponseDto(comment));
         }
         return commentResponseList;
     }
+    //comment repository에서 어떤 리스트들이 가져와지는지를 생각을해 사라야....띵킹어바웃
 
     // 내가 쓴 게시글인지 여부
     public boolean onMine(Board board, User user) {
@@ -122,7 +126,7 @@ public class BoardService {
         if (optionalBoardType.isEmpty()) {
             throw new CustomException(CustomErrorCode.BOARD_TYPE_NOT_FOUND);
         }
-        boardRepository.saveAndFlush(new Board(boardRequestDto, optionalBoardType.get(), user));
+        boardRepository.save(new Board(boardRequestDto, optionalBoardType.get(), user));
     }
 
     @Transactional
@@ -145,6 +149,8 @@ public class BoardService {
     public void deleteBoard(Long boardId, User user) {
         Board board = isExistBoard(boardId);
         isAuthor(board, user);
+        List<Comment> commentList = commentRepository.findByBoardId(boardId);
+        commentRepository.deleteAll(commentList);
         boardRepository.deleteById(boardId);
 
     }

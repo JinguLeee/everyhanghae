@@ -32,8 +32,9 @@ public class Board extends Timestamped {
     @JoinColumn(name = "userId", nullable = false)
     private User user;
 
-    @OneToMany(mappedBy = "board",cascade = CascadeType.REMOVE)
-    private List<Comment> commentList = new ArrayList<>();
+//    양방향 연관관계 맺을 때 사용
+//    @OneToMany(mappedBy = "board",cascade = CascadeType.REMOVE)
+//    private List<Comment> commentList = new ArrayList<>();
 
     public Board(BoardRequestDto boardRequestDto, BoardType boardType, User user) {
         this.classId = user.getClassId();
