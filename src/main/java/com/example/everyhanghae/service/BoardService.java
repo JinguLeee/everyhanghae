@@ -1,18 +1,15 @@
 package com.example.everyhanghae.service;
 
 import com.example.everyhanghae.dto.request.BoardRequestDto;
-import com.example.everyhanghae.dto.response.BoardDetailResponseDto;
-import com.example.everyhanghae.dto.response.BoardResponseDto;
-import com.example.everyhanghae.dto.response.BoardResponseAllDto;
-import com.example.everyhanghae.dto.response.BoardTypeResponseDto;
+import com.example.everyhanghae.dto.response.*;
 import com.example.everyhanghae.entity.Board;
 import com.example.everyhanghae.entity.BoardType;
+import com.example.everyhanghae.entity.Comment;
 import com.example.everyhanghae.entity.User;
 import com.example.everyhanghae.exception.CustomErrorCode;
 import com.example.everyhanghae.exception.CustomException;
 import com.example.everyhanghae.repository.BoardRepository;
 import com.example.everyhanghae.repository.BoardTypeRepository;
-import com.example.everyhanghae.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -97,7 +94,18 @@ public class BoardService {
         boolean onMine = onMine(board, user);
         Long totalLike = 0L;
         Long totalComment = 0L;
-        return new BoardDetailResponseDto(board, onLike, totalLike, totalComment, onMine);
+
+
+        return new BoardDetailResponseDto(board, onLike, totalLike, totalComment, onMine,getCommentResponseList(board));
+    }
+
+    //댓글 작업
+    public List<CommentResponseDto> getCommentResponseList(Board board){
+        List<CommentResponseDto> commentResponseList = new ArrayList<>();
+        for(Comment comment : board.getCommentList()){
+            commentResponseList.add(new CommentResponseDto(comment));
+        }
+        return commentResponseList;
     }
 
     // 내가 쓴 게시글인지 여부

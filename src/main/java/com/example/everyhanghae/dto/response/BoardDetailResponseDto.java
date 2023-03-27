@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 @Getter
 @NoArgsConstructor
@@ -22,7 +23,9 @@ public class BoardDetailResponseDto {
     private boolean onMine;
     private String createdAt;
 
-    public BoardDetailResponseDto(Board board, boolean onLike, Long totalLike, Long totalComment, boolean onMine) {
+    private List<CommentResponseDto> commentList;
+
+    public BoardDetailResponseDto(Board board, boolean onLike, Long totalLike, Long totalComment, boolean onMine, List<CommentResponseDto> commentResponseDtoList) {
         this.id = board.getId();
         this.boardType = board.getBoardType().getBoardType();
         this.typeName = board.getBoardType().getTypeName();
@@ -34,5 +37,6 @@ public class BoardDetailResponseDto {
         this.totalComment = totalComment;
         this.onMine = onMine;
         this.createdAt = board.getCreatedAt().format(DateTimeFormatter.ofPattern("MM/dd HH:mm"));
+        this.commentList = commentResponseDtoList;
     }
 }
