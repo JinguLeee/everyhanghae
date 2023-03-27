@@ -94,18 +94,18 @@ public class BoardService {
     public BoardDetailResponseDto getDetailBoard(Long boardId, User user) {
         Board board = isExistBoard(boardId);
         boolean onLike = false;
-        boolean onMine = onMine(board, user);
+        boolean onMine = board.getUser().getId() == user.getId();
         Long totalLike = 0L;
-        Long totalComment = 0L;
-        List<CommentResponseDto> commentResponseList = getCommentResponseList(board);
+        List<CommentResponseDto> commentResponseList = getCommentResponseList(board, user);
         return new BoardDetailResponseDto(board, onLike, totalLike, commentResponseList.size(), onMine, commentResponseList);
     }
 
     //댓글 작업
-    public List<CommentResponseDto> getCommentResponseList(Board board){
+    public List<CommentResponseDto> getCommentResponseList(Board board, User user){
         List<CommentResponseDto> commentResponseList = new ArrayList<>();
         for(Comment comment : board.getCommentList()){
-            commentResponseList.add(new CommentResponseDto(comment));
+            boolean onMine = comment.getUser().getId() == user.getId();
+            commentResponseList.add(new CommentResponseDto(comment, onMine));
         }
         return commentResponseList;
     }
