@@ -97,9 +97,8 @@ public class BoardService {
         boolean onMine = onMine(board, user);
         Long totalLike = 0L;
         Long totalComment = 0L;
-
-
-        return new BoardDetailResponseDto(board, onLike, totalLike, totalComment, onMine,getCommentResponseList(board));
+        List<CommentResponseDto> commentResponseList = getCommentResponseList(board);
+        return new BoardDetailResponseDto(board, onLike, totalLike, commentResponseList.size(), onMine, commentResponseList);
     }
 
     //댓글 작업
@@ -118,16 +117,16 @@ public class BoardService {
     }
 
     @Transactional
-    public void createPost(BoardRequestDto postRequestDto, User user) {
-        Optional<BoardType> optionalBoardType = boardTypeRepository.queryFindByType(postRequestDto.getBoardType());
+    public void createBoard(BoardRequestDto boardRequestDto, User user) {
+        Optional<BoardType> optionalBoardType = boardTypeRepository.queryFindByType(boardRequestDto.getBoardType());
         if (optionalBoardType.isEmpty()) {
             throw new CustomException(CustomErrorCode.BOARD_TYPE_NOT_FOUND);
         }
-        boardRepository.saveAndFlush(new Board(postRequestDto, optionalBoardType.get(), user));
+        boardRepository.saveAndFlush(new Board(boardRequestDto, optionalBoardType.get(), user));
     }
 
     @Transactional
-    public void updatePost(Long boardId, BoardRequestDto boardRequestDto, User user) {
+    public void updateBoard(Long boardId, BoardRequestDto boardRequestDto, User user) {
         Board board = isExistBoard(boardId);
         isAuthor(board, user);
 
@@ -143,7 +142,7 @@ public class BoardService {
 
     }
 
-    public void deletePost(Long boardId, User user) {
+    public void deleteBoard(Long boardId, User user) {
         Board board = isExistBoard(boardId);
         isAuthor(board, user);
         boardRepository.deleteById(boardId);
@@ -152,7 +151,7 @@ public class BoardService {
 
     //게시글 공감
     @Transactional
-    public SamePostResponseDto samePost(Long boardId, User user){
+    public SameBoardResponseDto sameBoard(Long boardId, User user){
         Board board = isExistBoard(boardId);
         Optional<Likes> likes = likesRepository.findByBoardAndUser(board, user);
         boolean like = likes.isEmpty();
@@ -162,7 +161,7 @@ public class BoardService {
         else{
             likesRepository.deleteById(likes.get().getId());
         }
-        return new SamePostResponseDto(onLike(board, user), countLikes(board));
+        return new SameBoardResponseDto(onLike(board, user), countLikes(board));
     }
 
 

@@ -30,27 +30,27 @@ public class BoardController {
 
     // 게시글 등록
     @PostMapping("board")
-    public ResponseEntity createBoard(@RequestBody BoardRequestDto postRequestDto, @AuthenticationPrincipal UserDetailsImpl userDetails){
-        boardService.createPost(postRequestDto, userDetails.getUser());
+    public ResponseEntity createBoard(@RequestBody BoardRequestDto boardRequestDto, @AuthenticationPrincipal UserDetailsImpl userDetails){
+        boardService.createBoard(boardRequestDto, userDetails.getUser());
         return ResponseMessage.SuccessResponse("작성 완료", "");
     }
 
     @PatchMapping("board/{boardId}")
-    public ResponseEntity updatePost(@PathVariable Long boardId, @RequestBody BoardRequestDto postRequestDto, @AuthenticationPrincipal UserDetailsImpl userDetails){
-        boardService.updatePost(boardId, postRequestDto, userDetails.getUser());
+    public ResponseEntity updateBoard(@PathVariable Long boardId, @RequestBody BoardRequestDto boardRequestDto, @AuthenticationPrincipal UserDetailsImpl userDetails){
+        boardService.updateBoard(boardId, boardRequestDto, userDetails.getUser());
         return ResponseMessage.SuccessResponse("수정 완료", "");
     }
 
     @DeleteMapping("board/{boardId}")
-    public ResponseEntity<String> deletePost(@PathVariable Long boardId, @AuthenticationPrincipal UserDetailsImpl userDetails){
-        boardService.deletePost(boardId, userDetails.getUser());
+    public ResponseEntity<String> deleteBoard(@PathVariable Long boardId, @AuthenticationPrincipal UserDetailsImpl userDetails){
+        boardService.deleteBoard(boardId, userDetails.getUser());
         return ResponseEntity.status(HttpStatus.OK).body("게시글 삭제 성공");
     }
 
     //게시글 공감
     @PostMapping("boards/{boardId}")
-    public ResponseEntity samePost(@PathVariable Long boardId, @AuthenticationPrincipal UserDetailsImpl userDetails){
-        return ResponseMessage.SuccessResponse("게시글 공감 완료", boardService.samePost(boardId, userDetails.getUser()));
+    public ResponseEntity sameBoard(@PathVariable Long boardId, @AuthenticationPrincipal UserDetailsImpl userDetails){
+        return ResponseMessage.SuccessResponse("게시글 공감 완료", boardService.sameBoard(boardId, userDetails.getUser()));
     }
 
 }
