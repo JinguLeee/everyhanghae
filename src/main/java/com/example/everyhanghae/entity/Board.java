@@ -3,6 +3,8 @@ import com.example.everyhanghae.dto.request.BoardRequestDto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Entity
@@ -29,6 +31,9 @@ public class Board extends Timestamped {
     @ManyToOne
     @JoinColumn(name = "userId", nullable = false)
     private User user;
+
+    @OneToMany(mappedBy = "board")
+    private List<Comment> commentList = new ArrayList<>();
 
     public Board(BoardRequestDto boardRequestDto, BoardType boardType, User user) {
         this.classId = user.getClassId();

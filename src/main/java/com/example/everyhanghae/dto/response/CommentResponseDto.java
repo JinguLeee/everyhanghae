@@ -1,6 +1,6 @@
 package com.example.everyhanghae.dto.response;
 
-import com.example.everyhanghae.entity.Board;
+import com.example.everyhanghae.entity.Comment;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
@@ -13,14 +13,11 @@ public class CommentResponseDto {
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
 
+    public CommentResponseDto(Comment comment){
+        this.id = comment.getId();
+        this.comment = comment.getComment();
+        this.createdAt = comment.getCreatedAt();
+        this.modifiedAt = comment.getModifiedAt();
+    }
+
 }
-
-
-//    public BoardTypeResponseDto(Board board, boolean onLike, Long totalLike, Long totalComment) {
-//        this.id = board.getId();
-//        this.title = board.getTitle();
-//        this.onLike = onLike;
-//        this.totalLike = totalLike;
-//        this.totalComment = totalComment;
-//        this.createdAt = board.getCreatedAt().format(DateTimeFormatter.ofPattern("MM/dd HH:mm"));
-//    }
