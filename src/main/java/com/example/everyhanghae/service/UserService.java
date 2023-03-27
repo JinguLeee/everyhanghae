@@ -46,6 +46,8 @@ public class UserService {
             throw new CustomException(CustomErrorCode.DUPLICATE_USER);
         }
 //
+        // commnetrepository.findby한걸 생성자에 넣어주면 끝이다. 조인을해서 쿼리로 가져오던가.
+        //
 //        //닉네임 형태 확인. 영어 소문자, 숫자만 입력 가능. 1글자 이상 12글자 미만으로 입력해야 함
 //        String userName = signupRequestDto.getUserName();
 //        if(userName == null || userName.length() < 1|| userName.length() >= 12){
