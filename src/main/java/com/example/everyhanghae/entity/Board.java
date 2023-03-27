@@ -32,7 +32,7 @@ public class Board extends Timestamped {
     @JoinColumn(name = "userId", nullable = false)
     private User user;
 
-    @OneToMany(mappedBy = "board")
+    @OneToMany(mappedBy = "board",cascade = CascadeType.REMOVE)
     private List<Comment> commentList = new ArrayList<>();
 
     public Board(BoardRequestDto boardRequestDto, BoardType boardType, User user) {
