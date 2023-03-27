@@ -94,9 +94,8 @@ public class BoardService {
         boolean onMine = onMine(board, user);
         Long totalLike = 0L;
         Long totalComment = 0L;
-
-
-        return new BoardDetailResponseDto(board, onLike, totalLike, totalComment, onMine,getCommentResponseList(board));
+        List<CommentResponseDto> commentResponseList = getCommentResponseList(board);
+        return new BoardDetailResponseDto(board, onLike, totalLike, commentResponseList.size(), onMine, commentResponseList);
     }
 
     //댓글 작업
