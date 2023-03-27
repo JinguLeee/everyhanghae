@@ -18,4 +18,5 @@ public interface BoardTypeRepository extends JpaRepository<BoardType, Integer> {
     @Query(value = "select b from BoardType b where b.boardType = :boardType")
     Optional<BoardType> queryFindByType(@Param("boardType") int boardType);
 
+
 }

@@ -47,4 +47,10 @@ public class BoardController {
         return ResponseEntity.status(HttpStatus.OK).body("게시글 삭제 성공");
     }
 
+    //게시글 공감
+    @PostMapping("boards/{boardId}")
+    public ResponseEntity samePost(@PathVariable Long boardId, @AuthenticationPrincipal UserDetailsImpl userDetails){
+        return ResponseMessage.SuccessResponse("게시글 공감 완료", boardService.samePost(boardId, userDetails.getUser()));
+    }
+
 }
