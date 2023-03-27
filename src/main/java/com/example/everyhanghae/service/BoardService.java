@@ -5,11 +5,13 @@ import com.example.everyhanghae.dto.response.*;
 import com.example.everyhanghae.entity.Board;
 import com.example.everyhanghae.entity.BoardType;
 import com.example.everyhanghae.entity.Comment;
+import com.example.everyhanghae.entity.Likes;
 import com.example.everyhanghae.entity.User;
 import com.example.everyhanghae.exception.CustomErrorCode;
 import com.example.everyhanghae.exception.CustomException;
 import com.example.everyhanghae.repository.BoardRepository;
 import com.example.everyhanghae.repository.BoardTypeRepository;
+import com.example.everyhanghae.repository.LikesRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,6 +26,7 @@ public class BoardService {
 
     private final BoardRepository boardRepository;
     private final BoardTypeRepository boardTypeRepository;
+    private final LikesRepository likesRepository;
 
     // 게시글 전체, 유형별 조회
     @Transactional
@@ -146,6 +149,21 @@ public class BoardService {
 
     }
 
+    //게시글 공감
+    @Transactional
+    public SamePostResponseDto samePost(Long boardId, User user){
+        Board board = isExistBoard(boardId);
+        Optional<Likes> likes = likesRepository.findByBoardAndUser(board, user);
+        boolean like = likes.isEmpty();
+        if(like){
+            likesRepository.saveAndFlush(new Likes(board, user));
+        }
+        else{
+            likesRepository.deleteById(likes.get().getId());
+        }
+        return new SamePostResponseDto(onLike(board, user), countLikes(board));
+    }
+
 
     //게시글 존재 하는지 확인 하는 공통 메서드
     public Board isExistBoard(Long id) {
@@ -160,4 +178,17 @@ public class BoardService {
             throw new CustomException(CustomErrorCode.NOT_AUTHOR);
         }
     }
+
+    //공감 체크
+    public boolean onLike(Board board, User user) {
+        if (user == null) return false;
+        Optional<Likes> like = likesRepository.findByBoardAndUser(board, user);
+        return like.isPresent();
+    }
+
+    //공감 갯수
+    public Long countLikes(Board board){
+        return likesRepository.countByBoard(board);
+    }
+
 }
