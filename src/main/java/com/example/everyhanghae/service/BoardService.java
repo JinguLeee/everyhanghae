@@ -14,6 +14,10 @@ import com.example.everyhanghae.repository.BoardTypeRepository;
 import com.example.everyhanghae.repository.CommentRepository;
 import com.example.everyhanghae.repository.LikesRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -83,6 +87,72 @@ public class BoardService {
         // BoardTypeResponseDto 리스트로 변환
         List<BoardTypeResponseDto> boardResponseDtoList = new ArrayList<>();
         for (Board board : boardList) {
+
+            boardResponseDtoList.add(new BoardTypeResponseDto(board, false, 0L, 0L));
+        }
+
+        // 반환할 List에 담음
+        boardResponseAllDtoList.add(new BoardResponseAllDto(optionalBoardType.get().getBoardType(), optionalBoardType.get().getTypeName(), boardResponseDtoList));
+
+        return boardResponseAllDtoList;
+    }
+
+    // 게시글 전체, 유형별 조회
+    @Transactional
+    public List<BoardResponseAllDto> getTypeBoardsTest(int boardType, int page, User user) {
+        if (boardType == 0) {
+            int size = 5;
+            Sort sort = Sort.by(Sort.Direction.DESC, "createdAt");
+            Pageable pageable = PageRequest.of(0, size, sort);
+            return getAllTypeBoardsTest(user, pageable);
+        }
+        else {
+            int size = 2;
+            Sort sort = Sort.by(Sort.Direction.DESC, "createdAt");
+            Pageable pageable = PageRequest.of(page, size, sort);
+            return getAllBoardsTest(boardType, user, pageable);
+        }
+    }
+
+    public List<BoardResponseAllDto> getAllTypeBoardsTest(User user, Pageable pageable) {
+        // 반환할 리스트 선언, 게시글 타입별 리스트를 add 하여 보냄
+        List<BoardResponseAllDto> boardResponseAllDtoList = new ArrayList<>();
+
+        // 현재 게시판 타입을 모두 조회
+        List<BoardType> boardTypeList = boardTypeRepository.queryFindAll();
+
+        // 타입별로 게시판을 전체 조회
+        for (BoardType boardTypeEntity : boardTypeList) {
+            // 기수, 게시판 타입으로 조회
+            Page<Board> boardList = boardRepository.findAllByClassIdAndBoardType(user.getClassId(), boardTypeEntity, pageable);
+//                List<Board> boardList = boardRepository.findAllByClassIdAndBoardTypeOrderByCreatedAtDesc(user.getClassId(), boardTypeEntity.getBoardType());
+
+            // 조회된 내역을 BoardResposeDto로 변환하기 위한 리스트
+            List<BoardResponseDto> boardResponseDtoList = new ArrayList<>();
+
+            for (Board board : boardList) {
+                boardResponseDtoList.add(new BoardResponseDto(board));
+            }
+
+            // 반환할 List에 담음
+            boardResponseAllDtoList.add(new BoardResponseAllDto(boardTypeEntity.getBoardType(), boardTypeEntity.getTypeName(), boardResponseDtoList));
+        }
+        return boardResponseAllDtoList;
+    }
+
+    public List<BoardResponseAllDto> getAllBoardsTest(int boardType, User user, Pageable pageable) {
+        // 반환할 리스트 선언, 게시글 타입별 리스트를 add 하여 보냄
+        List<BoardResponseAllDto> boardResponseAllDtoList = new ArrayList<>();
+
+        // 게시판 타입 종류 검색
+        Optional<BoardType> optionalBoardType = boardTypeRepository.queryFindByType(boardType);
+
+        // 기수, 게시판 타입으로 조회
+        Page<Board> boardPage = boardRepository.findAllByClassIdAndBoardType(user.getClassId(), optionalBoardType.get(), pageable);
+
+        // BoardTypeResponseDto 리스트로 변환
+        List<BoardTypeResponseDto> boardResponseDtoList = new ArrayList<>();
+        for (Board board : boardPage) {
             boardResponseDtoList.add(new BoardTypeResponseDto(board, false, 0L, 0L));
         }
 

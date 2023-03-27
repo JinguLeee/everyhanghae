@@ -1,6 +1,8 @@
 package com.example.everyhanghae.repository;
 import com.example.everyhanghae.entity.Board;
 import com.example.everyhanghae.entity.BoardType;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -15,5 +17,7 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
 //    List<Board> findAllByClassIdAndBoardTypeOrderByCreatedAtDesc(@Param("classId") int classId, @Param("boardType") int boardType);
     List<Board> findAllByClassIdAndBoardTypeOrderByCreatedAtDesc(int classId, BoardType boardType);
 
+    // 페이징처리
+    Page<Board> findAllByClassIdAndBoardType(int classId, BoardType boardType, Pageable pageable);
 
 }
