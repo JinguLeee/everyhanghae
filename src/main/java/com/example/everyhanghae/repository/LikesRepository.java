@@ -11,8 +11,10 @@ public interface LikesRepository extends JpaRepository<Likes, Long> {
     //보드, 사용자 확인
     Optional<Likes> findByBoardAndUser(Board borard, User user);
 
+    boolean existsByBoardAndUser(Board borard, User user);
+
     //공감 넣기
-    long countByBoard(Board board);
+    int countByBoard(Board board);
 
 //    //게시글 공감 전체 조회
 //    @Query(value = "select count(*) from Likes c where c.board_Id.id = :boardId and c.select = true")

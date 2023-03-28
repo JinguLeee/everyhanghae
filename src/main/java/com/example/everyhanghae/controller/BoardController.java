@@ -22,6 +22,12 @@ public class BoardController {
         return ResponseMessage.SuccessResponse("게시글 조회 완료" , boardService.getTypeBoards(boardType, userDetails.getUser()));
     }
 
+    // 페이징 처리 테스트
+    @GetMapping("/boards/test")
+    public ResponseEntity getTypeBoardsTest(@RequestParam(value = "board-type", defaultValue = "0") int boardType, @RequestParam(defaultValue = "1") int page, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return ResponseMessage.SuccessResponse("게시글 조회 완료" , boardService.getTypeBoardsTest(boardType, page-1, userDetails.getUser()));
+    }
+
     // 게시글 상세 조회
     @GetMapping("/board/{boardId}")
     public ResponseEntity getDetailBoard(@PathVariable Long boardId, @AuthenticationPrincipal UserDetailsImpl userDetails){
@@ -42,9 +48,9 @@ public class BoardController {
     }
 
     @DeleteMapping("board/{boardId}")
-    public ResponseEntity<String> deleteBoard(@PathVariable Long boardId, @AuthenticationPrincipal UserDetailsImpl userDetails){
+    public ResponseEntity deleteBoard(@PathVariable Long boardId, @AuthenticationPrincipal UserDetailsImpl userDetails){
         boardService.deleteBoard(boardId, userDetails.getUser());
-        return ResponseEntity.status(HttpStatus.OK).body("게시글 삭제 성공");
+        return ResponseMessage.SuccessResponse("게시글 삭제 성공", "");
     }
 
     //게시글 공감

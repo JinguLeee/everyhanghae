@@ -30,7 +30,7 @@ public class CommentController {
     }
 
     @DeleteMapping("/{commentId}")
-    public ResponseEntity<String> deleteBoard(@PathVariable Long commentId, @AuthenticationPrincipal UserDetailsImpl userDetails){
+    public ResponseEntity deleteBoard(@PathVariable Long commentId, @AuthenticationPrincipal UserDetailsImpl userDetails){
         commentService.delete(commentId,userDetails.getUser());
         return ResponseMessage.SuccessResponse("댓글 삭제 완료", "");
 

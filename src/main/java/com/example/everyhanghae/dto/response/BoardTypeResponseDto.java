@@ -13,11 +13,11 @@ public class BoardTypeResponseDto {
     private Long id;
     private String title;
     private boolean onLike;
-    private Long totalLike;
-    private Long totalComment;
+    private int totalLike;
+    private int totalComment;
     private String createdAt;
 
-    public BoardTypeResponseDto(Board board, boolean onLike, Long totalLike, Long totalComment) {
+    public BoardTypeResponseDto(Board board, boolean onLike, int totalLike, int totalComment) {
         this.id = board.getId();
         this.title = board.getTitle();
         this.onLike = onLike;
