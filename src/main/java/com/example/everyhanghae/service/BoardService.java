@@ -89,7 +89,7 @@ public class BoardService {
         // BoardTypeResponseDto 리스트로 변환
         List<BoardTypeResponseDto> boardResponseDtoList = new ArrayList<>();
         for (Board board : boardList) {
-            boolean onLike = board.getUser().getId() == user.getId();
+            boolean onLike = onLike(board, user);
             int totalLike = countLikes(board);
             int totalComment = countComments(board);
             boardResponseDtoList.add(new BoardTypeResponseDto(board, onLike, totalLike, totalComment));
@@ -165,7 +165,7 @@ public class BoardService {
         // BoardTypeResponseDto 리스트로 변환
         List<BoardTypeResponseDto> boardResponseDtoList = new ArrayList<>();
         for (Board board : boardPage) {
-            boolean onLike = board.getUser().getId() == user.getId();
+            boolean onLike = onLike(board, user);
             int totalLike = countLikes(board);
             int totalComment = countComments(board);
             boardResponseDtoList.add(new BoardTypeResponseDto(board, onLike, totalLike, totalComment));
@@ -181,9 +181,9 @@ public class BoardService {
     @Transactional
     public BoardDetailResponseDto getDetailBoard(Long boardId, User user) {
         Board board = isExistBoard(boardId);
-        boolean onLike = false;
+        boolean onLike = onLike(board, user);
         boolean onMine = board.getUser().getId() == user.getId();
-        int totalLike = 0;
+        int totalLike = countComments(board);
         List<CommentResponseDto> commentResponseList = getCommentResponseList(boardId, user);
         return new BoardDetailResponseDto(board, onLike, totalLike, commentResponseList.size(), onMine, commentResponseList);
     }
@@ -198,12 +198,6 @@ public class BoardService {
         return commentResponseList;
     }
     //comment repository에서 어떤 리스트들이 가져와지는지를 생각을해 사라야....띵킹어바웃
-
-    // 내가 쓴 게시글인지 여부
-    public boolean onMine(Board board, User user) {
-        if (user == null) return false;
-        return board.getUser().getId() == user.getId();
-    }
 
     @Transactional
     public void createBoard(BoardRequestDto boardRequestDto, User user) {
@@ -273,8 +267,7 @@ public class BoardService {
     //공감 체크
     public boolean onLike(Board board, User user) {
         if (user == null) return false;
-        Optional<Likes> like = likesRepository.findByBoardAndUser(board, user);
-        return like.isPresent();
+        return likesRepository.existsByBoardAndUser(board, user);
     }
 
     //공감 갯수

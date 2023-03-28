@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class CustomExceptionHandler {
     @ExceptionHandler(value = { CustomException.class })
-    protected ResponseEntity<ResponseMessage> handleCustomException(CustomException e) {
+    protected ResponseEntity handleCustomException(CustomException e) {
         log.error("handleCustomException throw CustomException : {}", e.getErrorCode());
         return ResponseMessage.ErrorResponse(e.getErrorCode());
 
@@ -19,7 +19,7 @@ public class CustomExceptionHandler {
 
     // 정규식 오류 처리
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<String> handleNotValidException(MethodArgumentNotValidException e){
+    public ResponseEntity handleNotValidException(MethodArgumentNotValidException e){
         log.error("handleNotValidException throw MethodArgumentNotValidException : {}", HttpStatus.BAD_REQUEST.value());
         String message = e.getFieldError().getDefaultMessage().split(":")[0];
         return ResponseMessage.ErrorResponse(message);

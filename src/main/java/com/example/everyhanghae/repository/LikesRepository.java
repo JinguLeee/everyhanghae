@@ -11,6 +11,8 @@ public interface LikesRepository extends JpaRepository<Likes, Long> {
     //보드, 사용자 확인
     Optional<Likes> findByBoardAndUser(Board borard, User user);
 
+    boolean existsByBoardAndUser(Board borard, User user);
+
     //공감 넣기
     int countByBoard(Board board);
 
