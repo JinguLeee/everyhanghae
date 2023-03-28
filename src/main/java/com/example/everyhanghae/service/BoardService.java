@@ -46,6 +46,7 @@ public class BoardService {
         else return getAllBoards(boardType, user);
     }
 
+    // 게시글 전체 조회
     public List<BoardResponseAllDto> getAllTypeBoards(User user) {
         // 반환할 리스트 선언, 게시글 타입별 리스트를 add 하여 보냄
         List<BoardResponseAllDto> boardResponseAllDtoList = new ArrayList<>();
@@ -73,6 +74,7 @@ public class BoardService {
         return boardResponseAllDtoList;
     }
 
+    // 게시글 유형별 조회
     public List<BoardResponseAllDto> getAllBoards(int boardType, User user) {
         // 반환할 리스트 선언, 게시글 타입별 리스트를 add 하여 보냄
         List<BoardResponseAllDto> boardResponseAllDtoList = new ArrayList<>();
@@ -87,8 +89,10 @@ public class BoardService {
         // BoardTypeResponseDto 리스트로 변환
         List<BoardTypeResponseDto> boardResponseDtoList = new ArrayList<>();
         for (Board board : boardList) {
-
-            boardResponseDtoList.add(new BoardTypeResponseDto(board, false, 0L, 0L));
+            boolean onLike = board.getUser().getId() == user.getId();
+            int totalLike = countLikes(board);
+            int totalComment = countComments(board);
+            boardResponseDtoList.add(new BoardTypeResponseDto(board, onLike, totalLike, totalComment));
         }
 
         // 반환할 List에 담음
@@ -97,7 +101,13 @@ public class BoardService {
         return boardResponseAllDtoList;
     }
 
-    // 게시글 전체, 유형별 조회
+
+    //공감 갯수
+    public int countComments(Board board){
+        return commentRepository.countByBoard(board);
+    }
+
+    // 게시글 전체, 유형별 조회 테스트 (페이징)
     @Transactional
     public List<BoardResponseAllDto> getTypeBoardsTest(int boardType, int page, User user) {
         if (boardType == 0) {
@@ -114,6 +124,7 @@ public class BoardService {
         }
     }
 
+    // 게시글 전체 조회 테스트(페이징)
     public List<BoardResponseAllDto> getAllTypeBoardsTest(User user, Pageable pageable) {
         // 반환할 리스트 선언, 게시글 타입별 리스트를 add 하여 보냄
         List<BoardResponseAllDto> boardResponseAllDtoList = new ArrayList<>();
@@ -140,6 +151,7 @@ public class BoardService {
         return boardResponseAllDtoList;
     }
 
+    // 게시글 유형별 조회 테스트(페이징)
     public List<BoardResponseAllDto> getAllBoardsTest(int boardType, User user, Pageable pageable) {
         // 반환할 리스트 선언, 게시글 타입별 리스트를 add 하여 보냄
         List<BoardResponseAllDto> boardResponseAllDtoList = new ArrayList<>();
@@ -153,7 +165,10 @@ public class BoardService {
         // BoardTypeResponseDto 리스트로 변환
         List<BoardTypeResponseDto> boardResponseDtoList = new ArrayList<>();
         for (Board board : boardPage) {
-            boardResponseDtoList.add(new BoardTypeResponseDto(board, false, 0L, 0L));
+            boolean onLike = board.getUser().getId() == user.getId();
+            int totalLike = countLikes(board);
+            int totalComment = countComments(board);
+            boardResponseDtoList.add(new BoardTypeResponseDto(board, onLike, totalLike, totalComment));
         }
 
         // 반환할 List에 담음
@@ -168,7 +183,7 @@ public class BoardService {
         Board board = isExistBoard(boardId);
         boolean onLike = false;
         boolean onMine = board.getUser().getId() == user.getId();
-        Long totalLike = 0L;
+        int totalLike = 0;
         List<CommentResponseDto> commentResponseList = getCommentResponseList(boardId, user);
         return new BoardDetailResponseDto(board, onLike, totalLike, commentResponseList.size(), onMine, commentResponseList);
     }
@@ -263,7 +278,7 @@ public class BoardService {
     }
 
     //공감 갯수
-    public Long countLikes(Board board){
+    public int countLikes(Board board){
         return likesRepository.countByBoard(board);
     }
 

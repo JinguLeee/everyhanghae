@@ -18,14 +18,14 @@ public class BoardDetailResponseDto {
     private String content;
     private String userName;
     private boolean onLike;
-    private Long totalLike;
+    private int totalLike;
     private int totalComment;
     private boolean onMine;
     private String createdAt;
 
     private List<CommentResponseDto> commentList;
 
-    public BoardDetailResponseDto(Board board, boolean onLike, Long totalLike, int totalComment, boolean onMine, List<CommentResponseDto> commentResponseDtoList) {
+    public BoardDetailResponseDto(Board board, boolean onLike, int totalLike, int totalComment, boolean onMine, List<CommentResponseDto> commentResponseDtoList) {
         this.id = board.getId();
         this.boardType = board.getBoardType().getBoardType();
         this.typeName = board.getBoardType().getTypeName();

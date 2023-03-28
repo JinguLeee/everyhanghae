@@ -5,9 +5,9 @@ import lombok.Getter;
 @Getter
 public class SameBoardResponseDto {
     private boolean onLike;
-    private long totalCount;
+    private int totalCount;
 
-    public SameBoardResponseDto(boolean onLike, long totalCount){
+    public SameBoardResponseDto(boolean onLike, int totalCount){
         this.onLike = onLike;
         this.totalCount = totalCount;
     }
