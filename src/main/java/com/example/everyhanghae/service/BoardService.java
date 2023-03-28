@@ -162,6 +162,10 @@ public class BoardService {
         // 기수, 게시판 타입으로 조회
         Page<Board> boardPage = boardRepository.findAllByClassIdAndBoardType(user.getClassId(), optionalBoardType.get(), pageable);
 
+        if (boardPage.getNumberOfElements() == 0){
+            throw new CustomException(CustomErrorCode.CONTENT_NOT_FOUND);
+        }
+
         // BoardTypeResponseDto 리스트로 변환
         List<BoardTypeResponseDto> boardResponseDtoList = new ArrayList<>();
         for (Board board : boardPage) {
