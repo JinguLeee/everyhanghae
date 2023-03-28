@@ -50,7 +50,7 @@ public class BoardController {
     @DeleteMapping("board/{boardId}")
     public ResponseEntity deleteBoard(@PathVariable Long boardId, @AuthenticationPrincipal UserDetailsImpl userDetails){
         boardService.deleteBoard(boardId, userDetails.getUser());
-        return ResponseEntity.status(HttpStatus.OK).body("게시글 삭제 성공");
+        return ResponseMessage.SuccessResponse("게시글 삭제 성공", "");
     }
 
     //게시글 공감
