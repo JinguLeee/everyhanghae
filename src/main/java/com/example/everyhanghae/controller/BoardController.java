@@ -38,19 +38,19 @@ public class BoardController {
     @PostMapping("board")
     public ResponseEntity createBoard(@RequestBody BoardRequestDto boardRequestDto, @AuthenticationPrincipal UserDetailsImpl userDetails){
         boardService.createBoard(boardRequestDto, userDetails.getUser());
-        return ResponseMessage.SuccessResponse("작성 완료", "");
+        return ResponseMessage.SuccessResponse("작성 완료", null);
     }
 
     @PatchMapping("board/{boardId}")
     public ResponseEntity updateBoard(@PathVariable Long boardId, @RequestBody BoardRequestDto boardRequestDto, @AuthenticationPrincipal UserDetailsImpl userDetails){
         boardService.updateBoard(boardId, boardRequestDto, userDetails.getUser());
-        return ResponseMessage.SuccessResponse("수정 완료", "");
+        return ResponseMessage.SuccessResponse("수정 완료", null);
     }
 
     @DeleteMapping("board/{boardId}")
     public ResponseEntity deleteBoard(@PathVariable Long boardId, @AuthenticationPrincipal UserDetailsImpl userDetails){
         boardService.deleteBoard(boardId, userDetails.getUser());
-        return ResponseMessage.SuccessResponse("게시글 삭제 성공", "");
+        return ResponseMessage.SuccessResponse("게시글 삭제 성공", null);
     }
 
     //게시글 공감

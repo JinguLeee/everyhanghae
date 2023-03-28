@@ -49,12 +49,14 @@ public class JwtUtil {
     }
 
     // 토큰 생성
-    public String createToken(String loginid) {
+    public String createToken(String loginId, String className) {
         Date date = new Date();
+        Claims claims = Jwts.claims().setSubject(loginId);
+        claims.put("className", className);
 
         return BEARER_PREFIX +
                 Jwts.builder()
-                        .setSubject(loginid)
+                        .setClaims(claims)
                         .setExpiration(new Date(date.getTime() + TOKEN_TIME))
                         .setIssuedAt(date)
                         .signWith(key, signatureAlgorithm)

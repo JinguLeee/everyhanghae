@@ -7,11 +7,10 @@ import lombok.Setter;
 @Setter
 public class LoginRequestDto {
     private String loginId;
-
     private String password;
 
-    public LoginRequestDto(String loginid, String password){
-        this.loginId = loginid;
+    public LoginRequestDto(String loginId, String password){
+        this.loginId = loginId;
         this.password = password;
     }
 

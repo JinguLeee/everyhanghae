@@ -189,7 +189,7 @@ public class BoardService {
         return new BoardDetailResponseDto(board, onLike, totalLike, commentResponseList.size(), onMine, commentResponseList);
     }
 
-    //댓글 작업 >> 양방향에서 단방향으로 수정 commentrepository에서 직접 불러오기
+    // 댓글 작업 >> 양방향에서 단방향으로 수정 commentrepository에서 직접 불러오기
     public List<CommentResponseDto> getCommentResponseList(Long boardId, User user){
         List<CommentResponseDto> commentResponseList = new ArrayList<>();
         for(Comment comment : commentRepository.findByBoardId(boardId)){
@@ -198,8 +198,9 @@ public class BoardService {
         }
         return commentResponseList;
     }
-    //comment repository에서 어떤 리스트들이 가져와지는지를 생각을해 사라야....띵킹어바웃
+    // comment repository에서 어떤 리스트들이 가져와지는지를 생각을해 사라야....띵킹어바웃
 
+    // 게시글 등록
     @Transactional
     public void createBoard(BoardRequestDto boardRequestDto, User user) {
         Optional<BoardType> optionalBoardType = boardTypeRepository.queryFindByType(boardRequestDto.getBoardType());
@@ -209,6 +210,7 @@ public class BoardService {
         boardRepository.save(new Board(boardRequestDto, optionalBoardType.get(), user));
     }
 
+    // 게시글 수정
     @Transactional
     public void updateBoard(Long boardId, BoardRequestDto boardRequestDto, User user) {
         Board board = isExistBoard(boardId);
@@ -222,21 +224,21 @@ public class BoardService {
         // 게시글 수정
         board.update(boardRequestDto.getTitle(), boardRequestDto.getContent());
         boardRepository.save(board);
-
-
     }
 
+    // 게시글 삭제
     @Transactional
     public void deleteBoard(Long boardId, User user) {
         Board board = isExistBoard(boardId);
         isAuthor(board, user);
 
+        // 연관관계 삭제
         commentRepository.deleteAllByBoard(board);
         likesRepository.deleteAllByBoard(board);
         boardRepository.deleteById(boardId);
     }
 
-    //게시글 공감
+    // 게시글 공감, 공감 취소
     @Transactional
     public SameBoardResponseDto sameBoard(Long boardId, User user){
         Board board = isExistBoard(boardId);
@@ -252,27 +254,27 @@ public class BoardService {
     }
 
 
-    //게시글 존재 하는지 확인 하는 공통 메서드
+    // 게시글 존재 하는지 확인 하는 공통 메서드
     public Board isExistBoard(Long id) {
         return boardRepository.findById(id).orElseThrow(
                 () -> new CustomException(CustomErrorCode.BOARD_NOT_FOUND)
         );
     }
 
-    //작성자가 일치 하는지 확인 하는 공통 메서드
+    // 작성자가 일치 하는지 확인 하는 공통 메서드
     public void isAuthor(Board board, User user) {
         if (!board.getUser().getId().equals(user.getId())) {
             throw new CustomException(CustomErrorCode.NOT_AUTHOR);
         }
     }
 
-    //공감 체크
+    // 공감 체크
     public boolean onLike(Board board, User user) {
         if (user == null) return false;
         return likesRepository.existsByBoardAndUser(board, user);
     }
 
-    //공감 갯수
+    // 공감 갯수
     public int countLikes(Board board){
         return likesRepository.countByBoard(board);
     }

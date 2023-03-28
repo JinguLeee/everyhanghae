@@ -6,7 +6,6 @@ import lombok.Getter;
 public class CommentRequestDto {
 
     private String comment;
-
     private boolean anonymous;
 
 }
