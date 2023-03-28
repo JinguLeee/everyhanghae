@@ -51,27 +51,16 @@ public class JwtUtil {
     // 토큰 생성
     public String createToken(String loginId, String className) {
         Date date = new Date();
-
+        Claims claims = Jwts.claims().setSubject(loginId);
+        claims.put("className", className);
         return BEARER_PREFIX +
                 Jwts.builder()
-                        .setSubject(loginId)
+                        .setClaims(claims)
                         .setExpiration(new Date(date.getTime() + TOKEN_TIME))
                         .setIssuedAt(date)
                         .signWith(key, signatureAlgorithm)
                         .compact();
     }
-
-//    Date date = new Date();
-    //        Claims claims = Jwts.claims().setSubject(loginId);
-//        claims.put("className", className);
-//
-//        return BEARER_PREFIX +
-//                Jwts.builder()
-//                        .setClaims(claims)
-//                        .setExpiration(new Date(date.getTime() + TOKEN_TIME))
-//                        .setIssuedAt(date)
-//                        .signWith(key, signatureAlgorithm)
-//                        .compact();
 
     // 토큰 검증
     public boolean validateToken(String token) {
@@ -96,8 +85,8 @@ public class JwtUtil {
     }
 
     // 인증 객체 생성
-    public Authentication createAuthentication(String loginid) {
-        UserDetails userDetails = userDetailsService.loadUserByUsername(loginid);
+    public Authentication createAuthentication(String loginId) {
+        UserDetails userDetails = userDetailsService.loadUserByUsername(loginId);
         return new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
     }
 
