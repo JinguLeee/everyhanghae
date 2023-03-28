@@ -11,4 +11,5 @@ public class SameBoardResponseDto {
         this.onLike = onLike;
         this.totalCount = totalCount;
     }
+
 }

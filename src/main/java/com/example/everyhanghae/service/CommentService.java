@@ -23,31 +23,28 @@ import static com.example.everyhanghae.exception.CustomErrorCode.NOT_AUTHOR;
 public class CommentService {
     private final CommentRepository commentRepository;
     private final BoardService boardService;
-    private final UserRepository userRepository;
 
+    // 댓글 작성
     @Transactional
     public void createComment(Long boardId, CommentRequestDto commentRequestDto, User user) {
         Board board = boardService.isExistBoard(boardId); //게시글이 있는지 확인
         Comment comment = new Comment(commentRequestDto,user,board);
         commentRepository.save(comment);
-
     }
 
+    // 댓글 수정
     @Transactional
-    public void update(Long commentId, CommentRequestDto commentRequestDto, User user) {
+    public void updateComment(Long commentId, CommentRequestDto commentRequestDto, User user) {
         Comment comment = getComment(commentId);
         isAuthor(comment,user);
         comment.update(commentRequestDto);
     }
 
-
-
-    public void delete(Long commentId, User user) {
+    public void deleteComment(Long commentId, User user) {
         Comment comment = getComment(commentId);
         isAuthor(comment,user);
         commentRepository.deleteById(commentId);
     }
-
 
     //댓글 존재하는지 확인
     private Comment getComment(Long commentId){

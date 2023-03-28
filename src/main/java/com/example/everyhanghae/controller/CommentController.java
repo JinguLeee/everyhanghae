@@ -18,22 +18,20 @@ public class CommentController {
 
     @PostMapping("/{boardId}")
     public ResponseEntity createComment(@PathVariable Long boardId, @RequestBody CommentRequestDto commentRequestDto, @AuthenticationPrincipal UserDetailsImpl userDetails){
-        commentService.createComment(boardId,commentRequestDto,userDetails.getUser());
-        return ResponseMessage.SuccessResponse("댓글 작성 완료", "");
+        commentService.createComment(boardId, commentRequestDto, userDetails.getUser());
+        return ResponseMessage.SuccessResponse("댓글 작성 완료", null);
     }
 
     @PatchMapping("/{commentId}")
     public ResponseEntity updateComment(@PathVariable Long commentId, @RequestBody CommentRequestDto commentRequestDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        commentService.update(commentId, commentRequestDto, userDetails.getUser());
-        return ResponseMessage.SuccessResponse("댓글 수정 완료", "");
-
+        commentService.updateComment(commentId, commentRequestDto, userDetails.getUser());
+        return ResponseMessage.SuccessResponse("댓글 수정 완료", null);
     }
 
     @DeleteMapping("/{commentId}")
-    public ResponseEntity deleteBoard(@PathVariable Long commentId, @AuthenticationPrincipal UserDetailsImpl userDetails){
-        commentService.delete(commentId,userDetails.getUser());
-        return ResponseMessage.SuccessResponse("댓글 삭제 완료", "");
-
+    public ResponseEntity deleteComment(@PathVariable Long commentId, @AuthenticationPrincipal UserDetailsImpl userDetails){
+        commentService.deleteComment(commentId, userDetails.getUser());
+        return ResponseMessage.SuccessResponse("댓글 삭제 완료", null);
     }
 
 
