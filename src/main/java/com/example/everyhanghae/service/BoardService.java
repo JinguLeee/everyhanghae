@@ -181,9 +181,10 @@ public class BoardService {
     @Transactional
     public BoardDetailResponseDto getDetailBoard(Long boardId, User user) {
         Board board = isExistBoard(boardId);
+
         boolean onLike = onLike(board, user);
         boolean onMine = board.getUser().getId() == user.getId();
-        int totalLike = countComments(board);
+        int totalLike = countLikes(board);
         List<CommentResponseDto> commentResponseList = getCommentResponseList(boardId, user);
         return new BoardDetailResponseDto(board, onLike, totalLike, commentResponseList.size(), onMine, commentResponseList);
     }
@@ -225,13 +226,14 @@ public class BoardService {
 
     }
 
+    @Transactional
     public void deleteBoard(Long boardId, User user) {
         Board board = isExistBoard(boardId);
         isAuthor(board, user);
-        List<Comment> commentList = commentRepository.findByBoardId(boardId);
-        commentRepository.deleteAll(commentList);
-        boardRepository.deleteById(boardId);
 
+        commentRepository.deleteAllByBoard(board);
+        likesRepository.deleteAllByBoard(board);
+        boardRepository.deleteById(boardId);
     }
 
     //게시글 공감
