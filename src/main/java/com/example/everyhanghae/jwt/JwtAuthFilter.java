@@ -20,6 +20,11 @@ import java.io.IOException;
 @Slf4j
 @RequiredArgsConstructor
 public class JwtAuthFilter extends OncePerRequestFilter {
+    /** OncePerRequestFilter와 JwtAuthFilter
+     * 모든 요청에 대해 한번만 실행되도록 보장하는 필터
+     * JwtAuthFilter는 HTTP 요청에 대해 JWT 인증을 수행
+     * JwtAuthFilter는 모든 HTTP 요청을 가로채어 JWT 인증을 수행하며, 인증이 완료된 요청에 대해서만 다음 단계로 진행할 수 있도록 보장
+     */
 
     private final JwtUtil jwtUtil;
 
