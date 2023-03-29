@@ -42,6 +42,13 @@ dependencies {
     // mysql 연결
     implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
     runtimeOnly 'com.mysql:mysql-connector-j'
+
+    implementation group: 'com.amazonaws', name: 'aws-java-sdk-s3', version: '1.11.1019'
+    implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
+
+    // 테스트 케이스를 위해 가짜 객체(Mock object)를 생성
+    testImplementation 'org.mockito:mockito-core:4.8.0'
+    testImplementation 'org.mockito:mockito-junit-jupiter:4.8.0'
 }
 
 tasks.named('test') {

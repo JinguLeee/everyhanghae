@@ -9,5 +9,7 @@ public class BoardRequestDto {
     private String title;
     private String content;
     private int boardType;
+    private String fileName;
+    private String filePath;
 
 }

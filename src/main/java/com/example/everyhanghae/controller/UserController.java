@@ -3,9 +3,11 @@ package com.example.everyhanghae.controller;
 import com.example.everyhanghae.dto.request.LoginRequestDto;
 import com.example.everyhanghae.dto.request.SignupRequestDto;
 import com.example.everyhanghae.exception.ResponseMessage;
+import com.example.everyhanghae.security.UserDetailsImpl;
 import com.example.everyhanghae.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
@@ -40,4 +42,9 @@ public class UserController {
         return ResponseMessage.SuccessResponse("로그인 성공!", null);
     }
 
+    @DeleteMapping()
+    public ResponseEntity deleteUsers(@AuthenticationPrincipal UserDetailsImpl userDetails, HttpServletResponse response) {
+        userService.deleteUsers(userDetails.getUser(), response);
+        return ResponseMessage.SuccessResponse("회원탈퇴 완료", null);
+    }
 }

@@ -2,17 +2,10 @@ package com.example.everyhanghae.service;
 
 import com.example.everyhanghae.dto.request.BoardRequestDto;
 import com.example.everyhanghae.dto.response.*;
-import com.example.everyhanghae.entity.Board;
-import com.example.everyhanghae.entity.BoardType;
-import com.example.everyhanghae.entity.Comment;
-import com.example.everyhanghae.entity.Likes;
-import com.example.everyhanghae.entity.User;
+import com.example.everyhanghae.entity.*;
 import com.example.everyhanghae.exception.CustomErrorCode;
 import com.example.everyhanghae.exception.CustomException;
-import com.example.everyhanghae.repository.BoardRepository;
-import com.example.everyhanghae.repository.BoardTypeRepository;
-import com.example.everyhanghae.repository.CommentRepository;
-import com.example.everyhanghae.repository.LikesRepository;
+import com.example.everyhanghae.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -32,100 +25,33 @@ public class BoardService {
     private final BoardRepository boardRepository;
     private final BoardTypeRepository boardTypeRepository;
     private final LikesRepository likesRepository;
-
+    private final FileUploadRepository fileUploadRepository;
     private final CommentRepository commentRepository;
+
+    private final FileUploadService fileUploadService;
 
     // 게시글 전체, 유형별 조회
     @Transactional
-    public List<BoardResponseAllDto> getTypeBoards(int boardType, User user) {
+    public List<BoardResponseAllDto> getTypeBoards(int boardType, int page, User user) {
          /*
          getAllTypeBoards 전체 검색일 때 (default = 0)
          getAllBoards 전체 타입별 검색일 때 (boardType = 1, 2, 3)
          */
-        if (boardType == 0) return getAllTypeBoards(user);
-        else return getAllBoards(boardType, user);
-    }
-
-    // 게시글 전체 조회
-    public List<BoardResponseAllDto> getAllTypeBoards(User user) {
-        // 반환할 리스트 선언, 게시글 타입별 리스트를 add 하여 보냄
-        List<BoardResponseAllDto> boardResponseAllDtoList = new ArrayList<>();
-
-        // 현재 게시판 타입을 모두 조회
-        List<BoardType> boardTypeList = boardTypeRepository.queryFindAll();
-
-        // 타입별로 게시판을 전체 조회
-        for (BoardType boardTypeEntity : boardTypeList) {
-            // 기수, 게시판 타입으로 조회
-            List<Board> boardList = boardRepository.findAllByClassIdAndBoardTypeOrderByCreatedAtDesc(user.getClassId(), boardTypeEntity);
-//                List<Board> boardList = boardRepository.findAllByClassIdAndBoardTypeOrderByCreatedAtDesc(user.getClassId(), boardTypeEntity.getBoardType());
-
-            // 조회된 내역을 BoardResposeDto로 변환하기 위한 리스트
-            List<BoardResponseDto> boardResponseDtoList = new ArrayList<>();
-
-            // 조회된 내역 중  최대 5개까지만 보내기
-            for (int i = 0; i < (boardList.size() > 5 ? 5 : boardList.size()); i++) {
-                boardResponseDtoList.add(new BoardResponseDto(boardList.get(i)));
-            }
-
-            // 반환할 List에 담음
-            boardResponseAllDtoList.add(new BoardResponseAllDto(boardTypeEntity.getBoardType(), boardTypeEntity.getTypeName(), boardResponseDtoList));
-        }
-        return boardResponseAllDtoList;
-    }
-
-    // 게시글 유형별 조회
-    public List<BoardResponseAllDto> getAllBoards(int boardType, User user) {
-        // 반환할 리스트 선언, 게시글 타입별 리스트를 add 하여 보냄
-        List<BoardResponseAllDto> boardResponseAllDtoList = new ArrayList<>();
-
-        // 게시판 타입 종류 검색
-        Optional<BoardType> optionalBoardType = boardTypeRepository.queryFindByType(boardType);
-
-        // 기수, 게시판 타입으로 조회
-        List<Board> boardList = boardRepository.findAllByClassIdAndBoardTypeOrderByCreatedAtDesc(user.getClassId(), optionalBoardType.get());
-//        List<Board> boardList = boardRepository.findAllByClassIdAndBoardTypeOrderByCreatedAtDesc(user.getClassId(), optionalBoardType.get().getBoardType());
-
-        // BoardTypeResponseDto 리스트로 변환
-        List<BoardTypeResponseDto> boardResponseDtoList = new ArrayList<>();
-        for (Board board : boardList) {
-            boolean onLike = onLike(board, user);
-            int totalLike = countLikes(board);
-            int totalComment = countComments(board);
-            boardResponseDtoList.add(new BoardTypeResponseDto(board, onLike, totalLike, totalComment));
-        }
-
-        // 반환할 List에 담음
-        boardResponseAllDtoList.add(new BoardResponseAllDto(optionalBoardType.get().getBoardType(), optionalBoardType.get().getTypeName(), boardResponseDtoList));
-
-        return boardResponseAllDtoList;
-    }
-
-
-    //공감 갯수
-    public int countComments(Board board){
-        return commentRepository.countByBoard(board);
-    }
-
-    // 게시글 전체, 유형별 조회 테스트 (페이징)
-    @Transactional
-    public List<BoardResponseAllDto> getTypeBoardsTest(int boardType, int page, User user) {
         if (boardType == 0) {
             int size = 5;
             Sort sort = Sort.by(Sort.Direction.DESC, "createdAt");
             Pageable pageable = PageRequest.of(0, size, sort);
-            return getAllTypeBoardsTest(user, pageable);
+            return getAllTypeBoards(user, pageable);
         }
-        else {
-            int size = 2;
-            Sort sort = Sort.by(Sort.Direction.DESC, "createdAt");
-            Pageable pageable = PageRequest.of(page, size, sort);
-            return getAllBoardsTest(boardType, user, pageable);
-        }
+
+        int size = 12;
+        Sort sort = Sort.by(Sort.Direction.DESC, "createdAt");
+        Pageable pageable = PageRequest.of(page, size, sort);
+        return getAllBoards(boardType, user, pageable);
     }
 
-    // 게시글 전체 조회 테스트(페이징)
-    public List<BoardResponseAllDto> getAllTypeBoardsTest(User user, Pageable pageable) {
+    // 게시글 전체 조회
+    public List<BoardResponseAllDto> getAllTypeBoards(User user, Pageable pageable) {
         // 반환할 리스트 선언, 게시글 타입별 리스트를 add 하여 보냄
         List<BoardResponseAllDto> boardResponseAllDtoList = new ArrayList<>();
 
@@ -136,7 +62,6 @@ public class BoardService {
         for (BoardType boardTypeEntity : boardTypeList) {
             // 기수, 게시판 타입으로 조회
             Page<Board> boardList = boardRepository.findAllByClassIdAndBoardType(user.getClassId(), boardTypeEntity, pageable);
-//                List<Board> boardList = boardRepository.findAllByClassIdAndBoardTypeOrderByCreatedAtDesc(user.getClassId(), boardTypeEntity.getBoardType());
 
             // 조회된 내역을 BoardResposeDto로 변환하기 위한 리스트
             List<BoardResponseDto> boardResponseDtoList = new ArrayList<>();
@@ -151,13 +76,17 @@ public class BoardService {
         return boardResponseAllDtoList;
     }
 
-    // 게시글 유형별 조회 테스트(페이징)
-    public List<BoardResponseAllDto> getAllBoardsTest(int boardType, User user, Pageable pageable) {
+    // 게시글 유형별 조회
+    public List<BoardResponseAllDto> getAllBoards(int boardType, User user, Pageable pageable) {
         // 반환할 리스트 선언, 게시글 타입별 리스트를 add 하여 보냄
         List<BoardResponseAllDto> boardResponseAllDtoList = new ArrayList<>();
 
         // 게시판 타입 종류 검색
         Optional<BoardType> optionalBoardType = boardTypeRepository.queryFindByType(boardType);
+
+        if (optionalBoardType.isEmpty()){
+            throw new CustomException(CustomErrorCode.CONTENT_NOT_FOUND);
+        }
 
         // 기수, 게시판 타입으로 조회
         Page<Board> boardPage = boardRepository.findAllByClassIdAndBoardType(user.getClassId(), optionalBoardType.get(), pageable);
@@ -181,6 +110,11 @@ public class BoardService {
         return boardResponseAllDtoList;
     }
 
+    //공감 갯수
+    public int countComments(Board board){
+        return commentRepository.countByBoard(board);
+    }
+
     // 게시글 상세조회
     @Transactional
     public BoardDetailResponseDto getDetailBoard(Long boardId, User user) {
@@ -190,7 +124,10 @@ public class BoardService {
         boolean onMine = board.getUser().getId() == user.getId();
         int totalLike = countLikes(board);
         List<CommentResponseDto> commentResponseList = getCommentResponseList(boardId, user);
-        return new BoardDetailResponseDto(board, onLike, totalLike, commentResponseList.size(), onMine, commentResponseList);
+        String filePath = null;
+        Optional<FileUpload> fileUpload = fileUploadRepository.findByBoard(board);
+        if (fileUpload.isPresent()) filePath = fileUploadRepository.findByBoard(board).get().getFilePath();
+        return new BoardDetailResponseDto(board, onLike, totalLike, commentResponseList.size(), onMine, filePath, commentResponseList);
     }
 
     // 댓글 작업 >> 양방향에서 단방향으로 수정 commentrepository에서 직접 불러오기
@@ -211,7 +148,14 @@ public class BoardService {
         if (optionalBoardType.isEmpty()) {
             throw new CustomException(CustomErrorCode.BOARD_TYPE_NOT_FOUND);
         }
-        boardRepository.save(new Board(boardRequestDto, optionalBoardType.get(), user));
+
+        Board board = boardRepository.save(new Board(boardRequestDto, optionalBoardType.get(), user));
+
+        // 올릴 파일이 없으면 return
+        if (boardRequestDto.getFilePath() == null) return;
+        if (boardRequestDto.getFilePath() == "") return;
+
+        fileUploadRepository.save(new FileUpload(board, boardRequestDto.getFileName(), boardRequestDto.getFilePath()));
     }
 
     // 게시글 수정
@@ -228,6 +172,16 @@ public class BoardService {
         // 게시글 수정
         board.update(boardRequestDto.getTitle(), boardRequestDto.getContent());
         boardRepository.save(board);
+
+        Optional<FileUpload> fileUpload = fileUploadRepository.findByBoard(board);
+        fileUploadService.deleteFile(fileUpload.get().getFileName());
+        fileUploadRepository.deleteAllByBoard(board);
+
+        // 올릴 파일이 없으면 return
+        if (boardRequestDto.getFilePath() == null) return;
+        if (boardRequestDto.getFilePath() == "") return;
+
+        fileUploadRepository.save(new FileUpload(board, boardRequestDto.getFileName(), boardRequestDto.getFilePath()));
     }
 
     // 게시글 삭제
@@ -239,6 +193,7 @@ public class BoardService {
         // 연관관계 삭제
         commentRepository.deleteAllByBoard(board);
         likesRepository.deleteAllByBoard(board);
+        fileUploadRepository.deleteAllByBoard(board);
         boardRepository.deleteById(boardId);
     }
 

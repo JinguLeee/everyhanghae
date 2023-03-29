@@ -22,10 +22,10 @@ public class BoardDetailResponseDto {
     private int totalComment;
     private boolean onMine;
     private String createdAt;
-
+    private String filePath;
     private List<CommentResponseDto> commentList;
 
-    public BoardDetailResponseDto(Board board, boolean onLike, int totalLike, int totalComment, boolean onMine, List<CommentResponseDto> commentResponseDtoList) {
+    public BoardDetailResponseDto(Board board, boolean onLike, int totalLike, int totalComment, boolean onMine, String filePath, List<CommentResponseDto> commentResponseDtoList) {
         this.id = board.getId();
         this.boardType = board.getBoardType().getBoardType();
         this.typeName = board.getBoardType().getTypeName();
@@ -37,6 +37,7 @@ public class BoardDetailResponseDto {
         this.totalComment = totalComment;
         this.onMine = onMine;
         this.createdAt = board.getCreatedAt().format(DateTimeFormatter.ofPattern("MM/dd HH:mm"));
+        this.filePath = filePath;
         this.commentList = commentResponseDtoList;
     }
 }

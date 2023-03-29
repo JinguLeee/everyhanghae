@@ -1,6 +1,8 @@
 package com.example.everyhanghae.repository;
 import com.example.everyhanghae.entity.Board;
 import com.example.everyhanghae.entity.BoardType;
+import com.example.everyhanghae.entity.Comment;
+import com.example.everyhanghae.entity.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -19,5 +21,7 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
 
     // 페이징처리
     Page<Board> findAllByClassIdAndBoardType(int classId, BoardType boardType, Pageable pageable);
+
+    List<Board> findAllByUser(User user);
 
 }
