@@ -32,6 +32,14 @@ public class SignupRequestDto {
     @NotNull
     private String secretKey;
 
+    public SignupRequestDto(String loginId, String userName, String password, String email, String secretKey) {
+        this.loginId = loginId;
+        this.userName = userName;
+        this.password = password;
+        this.email = email;
+        this.secretKey = secretKey;
+    }
+
     //한글만 입력 가능. 1글자 이상 10글자 미만으로 입력해야 함
     //(regexp = "^[가-힣]{1,10}$")
 

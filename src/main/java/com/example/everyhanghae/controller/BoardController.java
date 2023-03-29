@@ -4,7 +4,6 @@ import com.example.everyhanghae.exception.ResponseMessage;
 import com.example.everyhanghae.security.UserDetailsImpl;
 import com.example.everyhanghae.service.BoardService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -18,14 +17,10 @@ public class BoardController {
 
     // 게시글 전체, 유형별 조회
     @GetMapping("/boards")
-    public ResponseEntity getTypeBoards(@RequestParam(value = "board-type", required = false, defaultValue = "0") int boardType, @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return ResponseMessage.SuccessResponse("게시글 조회 완료" , boardService.getTypeBoards(boardType, userDetails.getUser()));
-    }
-
-    // 페이징 처리 테스트
-    @GetMapping("/boards/test")
-    public ResponseEntity getTypeBoardsTest(@RequestParam(value = "board-type", defaultValue = "0") int boardType, @RequestParam(defaultValue = "1") int page, @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return ResponseMessage.SuccessResponse("게시글 조회 완료" , boardService.getTypeBoardsTest(boardType, page-1, userDetails.getUser()));
+    public ResponseEntity getTypeBoards(@RequestParam(value = "board-type", required = false, defaultValue = "0") int boardType,
+                                        @RequestParam(defaultValue = "1") int page,
+                                        @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return ResponseMessage.SuccessResponse("게시글 조회 완료" , boardService.getTypeBoards(boardType, page-1, userDetails.getUser()));
     }
 
     // 게시글 상세 조회

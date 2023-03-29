@@ -2,26 +2,31 @@ package com.example.everyhanghae.service;
 
 import com.example.everyhanghae.dto.request.LoginRequestDto;
 import com.example.everyhanghae.dto.request.SignupRequestDto;
+import com.example.everyhanghae.entity.Board;
 import com.example.everyhanghae.entity.ClassCode;
 import com.example.everyhanghae.entity.User;
 import com.example.everyhanghae.exception.CustomErrorCode;
 import com.example.everyhanghae.exception.CustomException;
 import com.example.everyhanghae.jwt.JwtUtil;
-import com.example.everyhanghae.repository.ClassCodeRepository;
-import com.example.everyhanghae.repository.UserRepository;
+import com.example.everyhanghae.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletResponse;
+import java.util.List;
 import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
+    private final LikesRepository likesRepository;
+    private final CommentRepository commentRepository;
     private final ClassCodeRepository classCodeRepository;
+    private final BoardRepository boardRepository;
+    private final FileUploadRepository fileuploadRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
 
@@ -64,6 +69,33 @@ public class UserService {
 
         // 사용자의 기수를 검색해서 토큰에 같이 넣어줌
         Optional<ClassCode> classCode = classCodeRepository.findByClassId(user.getClassId());
+        if (classCode.isEmpty()){
+            throw new CustomException(CustomErrorCode.SECRET_KEY_NOT_FOUND);
+        }
         response.setHeader(JwtUtil.AUTHORIZATION_HEADER, jwtUtil.createToken(user.getLoginId(), classCode.get().getClassName()));
+    }
+
+    @Transactional
+    public void deleteUsers(User user, HttpServletResponse response) {
+        // 내가 한 공감 모두 삭제
+        likesRepository.deleteAllByUser(user);
+
+        // 내가 쓴 댓글 모두 삭제
+        commentRepository.deleteAllByUser(user);
+
+        // 게시글 삭제 -> 내가 쓴 게시판의 모든 댓글, 공감 먼저 모두 삭제
+        List<Board> boardList = boardRepository.findAllByUser(user);
+        for (Board board : boardList) {
+            commentRepository.deleteAllByBoard(board);
+            likesRepository.deleteAllByBoard(board);
+            fileuploadRepository.deleteAllByBoard(board);
+            boardRepository.deleteById(board.getId());
+        }
+
+        // 아이디 삭제
+        userRepository.deleteById(user.getId());
+
+        // 로그아웃
+        response.setHeader(JwtUtil.AUTHORIZATION_HEADER, null);
     }
 }

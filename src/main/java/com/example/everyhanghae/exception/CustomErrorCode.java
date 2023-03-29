@@ -24,7 +24,8 @@ public enum CustomErrorCode {
     BOARD_NOT_FOUND(NOT_FOUND, "선택한 게시물을 찾을 수 없습니다."),
     COMMENT_NOT_FOUND(NOT_FOUND, "선택한 댓글을 찾을 수 없습니다."),
     SECRET_KEY_NOT_FOUND(NOT_FOUND, "해당 시크릿 키는 존재하지 않습니다."),
-    BOARD_TYPE_NOT_FOUND(NOT_FOUND, "게시글 유형을 찾을 수 없습니다.")
+    BOARD_TYPE_NOT_FOUND(NOT_FOUND, "게시글 유형을 찾을 수 없습니다."),
+    CONTENT_NOT_FOUND(NOT_FOUND, "게시글이 존재하지 않습니다."),
 
     ;
 
