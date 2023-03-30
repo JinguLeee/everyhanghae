@@ -28,8 +28,6 @@ public class BoardService {
     private final FileUploadRepository fileUploadRepository;
     private final CommentRepository commentRepository;
 
-    private final FileUploadService fileUploadService;
-
     // 게시글 전체, 유형별 조회
     @Transactional
     public List<BoardResponseAllDto> getTypeBoards(int boardType, int page, User user) {
@@ -164,24 +162,20 @@ public class BoardService {
         Board board = isExistBoard(boardId);
         isAuthor(board, user);
 
-//        게시글 작성자 일치여부 확인 > 공통메서드 처리
-//        if (!board.getUser().getId().equals(user.getId())) {
-//            throw new CustomException(NOT_AUTHOR);
-//        }
-
         // 게시글 수정
         board.update(boardRequestDto.getTitle(), boardRequestDto.getContent());
         boardRepository.save(board);
 
-        Optional<FileUpload> fileUpload = fileUploadRepository.findByBoard(board);
-        fileUploadService.deleteFile(fileUpload.get().getFileName());
-        fileUploadRepository.deleteAllByBoard(board);
-
         // 올릴 파일이 없으면 return
-        if (boardRequestDto.getFilePath() == null) return;
-        if (boardRequestDto.getFilePath() == "") return;
+        if (boardRequestDto.getFilePath() == "") {
+            fileUploadRepository.deleteAllByBoard(board);
+            return;
+        }
 
-        fileUploadRepository.save(new FileUpload(board, boardRequestDto.getFileName(), boardRequestDto.getFilePath()));
+        fileUploadRepository.findByBoard(board);
+        Optional<FileUpload> fileUpload = fileUploadRepository.findByBoard(board);
+        if (fileUpload.isPresent()) fileUpload.get().update(boardRequestDto.getFileName(), boardRequestDto.getFilePath());
+        else fileUploadRepository.save(new FileUpload(board, boardRequestDto.getFileName(), boardRequestDto.getFilePath()));
     }
 
     // 게시글 삭제

@@ -33,4 +33,9 @@ public class FileUpload {
         this.filePath = filePath;
     }
 
+    public void update(String fileName, String filePath) {
+        this.fileName = fileName;
+        this.filePath = filePath;
+    }
+
 }

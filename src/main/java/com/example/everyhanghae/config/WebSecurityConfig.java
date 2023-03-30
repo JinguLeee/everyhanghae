@@ -69,7 +69,7 @@ public class WebSecurityConfig {
         config.addAllowedOrigin("http://localhost:3000");
 
         // 프론트 웹 주소 허용
-        // config.addAllowedOrigin("http://mini-prject-team3.s3-website.ap-northeast-2.amazonaws.com");
+         config.addAllowedOrigin("http://everyhanghae.s3-website.ap-northeast-2.amazonaws.com");
 
         // 특정 헤더를 클라이언트 측에서 사용할 수 있게 지정
         // 만약 지정하지 않는다면, Authorization 헤더 내의 토큰 값을 사용할 수 없음

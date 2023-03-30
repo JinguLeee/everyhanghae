@@ -31,7 +31,8 @@ public class BoardDetailResponseDto {
         this.typeName = board.getBoardType().getTypeName();
         this.title = board.getTitle();
         this.content = board.getContent();
-        this.userName = board.getUser().getUsername();
+        // 익명이 true이면 닉네임이 익명으로 보이게 처리
+        this.userName = (board.isAnonymous() ? "익명" : board.getUser().getUsername());
         this.onLike = onLike;
         this.totalLike = totalLike;
         this.totalComment = totalComment;
