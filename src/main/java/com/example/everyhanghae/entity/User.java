@@ -16,6 +16,8 @@ public class User {
     @Column(nullable = false, unique = true)
     private String loginId;
 
+    private Long kakaoId;
+
     @Column(nullable = false, unique = true)
     private String username;
 
@@ -25,6 +27,8 @@ public class User {
     @Column(nullable = false)
     private int classId;
 
+    @Column(nullable = false)
+    private int email;
 
     public User(SignupRequestDto signupRequestDto, String password, int classId) {
         this.loginId = signupRequestDto.getLoginId();
@@ -32,4 +36,16 @@ public class User {
         this.password = password;
         this.classId = classId;
     }
+
+    public User(Long kakaoId, String userName, String password) {
+        this.kakaoId = kakaoId;
+        this.username = userName;
+        this.password = password;
+    }
+
+    public User kakaoIdUpdate(Long kakaoId) {
+        this.kakaoId = kakaoId;
+        return this;
+    }
+
 }
