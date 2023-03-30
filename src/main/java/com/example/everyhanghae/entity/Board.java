@@ -28,6 +28,9 @@ public class Board extends Timestamped {
     @Column(nullable = false)
     private String content;
 
+    @Column(nullable = false)
+    private boolean anonymous;
+
     @ManyToOne
     @JoinColumn(name = "userId", nullable = false)
     private User user;
@@ -41,6 +44,7 @@ public class Board extends Timestamped {
         this.boardType = boardType;
         this.title = boardRequestDto.getTitle();
         this.content = boardRequestDto.getContent();
+        this.anonymous = boardRequestDto.isAnonymous();
         this.user = user;
     }
 
